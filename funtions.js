@@ -38,3 +38,19 @@ const observer = new MutationObserver(handleChildAdditions);
 
 // Configure the observer to only watch for child additions
 observer.observe(container, { childList: true });
+
+
+// Work around this function, it changes the behavior of XHR objetc to make requests from frontend
+// so pulls all information and passes to another auxiliar XHR function, so there API calls
+// Work without problem.
+
+(function() {
+  const originalXHR = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+      if(url.includes(".jpg")) {console.log(XHR Request: ${method} ${url})}
+      this.addEventListener('load', function() {
+          console.log(Response: ${this.responseText});
+      });
+      return originalXHR.call(this, method, url, ...rest);
+  };
+})();
